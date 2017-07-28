@@ -9,6 +9,9 @@ class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
     pass
 
+def is_terminal(game):
+    active_player = game.active_player
+    return game.is_winner(active_player) or game.is_loser(active_player)
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -170,6 +173,26 @@ class MinimaxPlayer(IsolationPlayer):
         # Return the best move from the last completed search iteration
         return best_move
 
+    def _min_value(self, game, depth):
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if depth==0 or is_terminal(game):
+            return self.score(game, self)
+
+        return min((self._max_value(game.forecast_move(m), depth-1))
+                   for m in game.get_legal_moves())
+
+    def _max_value(self, game, depth):
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if depth==0 or is_terminal(game):
+            return self.score(game, self)
+
+        return max((self._min_value(game.forecast_move(m), depth-1))
+                   for m in game.get_legal_moves())
+
     def minimax(self, game, depth):
         """Implement depth-limited minimax search algorithm as described in
         the lectures.
@@ -212,8 +235,8 @@ class MinimaxPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        mins = lambda m: self._min_value(game.forecast_move(m), depth-1)
+        return max(game.get_legal_moves(self), key=mins, default=(-1, -1))
 
 
 class AlphaBetaPlayer(IsolationPlayer):

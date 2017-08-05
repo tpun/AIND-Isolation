@@ -3,7 +3,7 @@ test your agent's strength against a set of known agents using tournament.py
 and include the results in your report.
 """
 import random
-
+import math
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -37,9 +37,29 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
 
+#                         *************************
+#                              Playing Matches
+#                         *************************
+#
+#  Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+#                         Won | Lost   Won | Lost   Won | Lost   Won | Lost
+#     1       Random      18  |   2    20  |   0    19  |   1    19  |   1
+#     2       MM_Open     12  |   8    17  |   3    17  |   3    12  |   8
+#     3      MM_Center    16  |   4    18  |   2    15  |   5    19  |   1
+#     4     MM_Improved   13  |   7    17  |   3    16  |   4    15  |   5
+#     5       AB_Open     11  |   9    13  |   7    11  |   9     8  |  12
+#     6      AB_Center    11  |   9    10  |  10    10  |  10     8  |  12
+#     7     AB_Improved   10  |  10     8  |  12    10  |  10    10  |  10
+# --------------------------------------------------------------------------
+#            Win Rate:      65.0%        73.6%        70.0%        65.0%
+
+    # Prefer moves that result in overlapping moves because it gives us higher
+    # chance of blocking their next move.
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(game.get_opponent(player))
+    overlap_moves = set(own_moves).intersection(set(opp_moves))
+    return float(len(own_moves) - len(opp_moves) + len(overlap_moves))
 
 def custom_score_2(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -63,9 +83,12 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
 
+    # Increase the effect of the difference in moves
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(game.get_opponent(player))
+    diff_moves = len(own_moves) - len(opp_moves)
+    return math.copysign(diff_moves * diff_moves, diff_moves)
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -89,9 +112,13 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
 
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(game.get_opponent(player))
+    # Be more aggressive when there are fewer spaces.
+    factor = (game.width * game.height) / len(game.get_blank_spaces())
+    factor = max(factor, 3)
+    return float(len(own_moves) - factor * len(opp_moves))
 
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never

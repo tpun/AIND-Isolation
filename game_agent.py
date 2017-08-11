@@ -44,15 +44,21 @@ def custom_score(game, player):
 #
 #  Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
 #                         Won | Lost   Won | Lost   Won | Lost   Won | Lost
-#     1       Random      18  |   2    20  |   0    19  |   1    19  |   1
-#     2       MM_Open     12  |   8    17  |   3    17  |   3    12  |   8
-#     3      MM_Center    16  |   4    18  |   2    15  |   5    19  |   1
-#     4     MM_Improved   13  |   7    17  |   3    16  |   4    15  |   5
-#     5       AB_Open     11  |   9    13  |   7    11  |   9     8  |  12
-#     6      AB_Center    11  |   9    10  |  10    10  |  10     8  |  12
-#     7     AB_Improved   10  |  10     8  |  12    10  |  10    10  |  10
+#     1       Random       9  |   1    10  |   0    10  |   0     9  |   1
+#     2       MM_Open      6  |   4     9  |   1     8  |   2     8  |   2
+#     3      MM_Center     9  |   1     9  |   1     9  |   1     9  |   1
+#     4     MM_Improved    5  |   5     7  |   3     7  |   3     7  |   3
+#     5       AB_Open      8  |   2     7  |   3     5  |   5     5  |   5
+#     6      AB_Center     5  |   5     6  |   4     5  |   5     5  |   5
+#     7     AB_Improved    4  |   6     5  |   5     4  |   6     4  |   6
 # --------------------------------------------------------------------------
-#            Win Rate:      65.0%        73.6%        70.0%        65.0%
+#            Win Rate:      65.7%        75.7%        68.6%        67.1%
+#
+# There were 16.0 timeouts during the tournament -- make sure your agent handles search timeout correctly, and consider increasing the timeout margin for your agent.
+#
+#
+# Your ID search forfeited 77.0 games while there were still legal moves available to play.
+
 
     # Prefer moves that result in overlapping moves because it gives us higher
     # chance of blocking their next move.
@@ -87,8 +93,7 @@ def custom_score_2(game, player):
     # Increase the effect of the difference in moves
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(game.get_opponent(player))
-    diff_moves = len(own_moves) - len(opp_moves)
-    return math.copysign(diff_moves * diff_moves, diff_moves)
+    return len(own_moves)*len(own_moves) - len(opp_moves)*len(opp_moves)
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view

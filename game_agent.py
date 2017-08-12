@@ -330,8 +330,11 @@ class AlphaBetaPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        if depth == 0 or is_terminal(game):
-            return self.score(game, self), (-1, -1)
+        if is_terminal(game):
+            return game.utility(self), (-1, -1)
+
+        if depth==0 or not game.get_legal_moves():
+            return self.score(game, self), game.get_player_location(self)
 
         v = float("-inf")
         move = (-1, -1)
@@ -347,8 +350,11 @@ class AlphaBetaPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        if depth == 0 or is_terminal(game):
-            return self.score(game, self), (-1, -1)
+        if is_terminal(game):
+            return game.utility(self), (-1, -1)
+
+        if depth==0 or not game.get_legal_moves():
+            return self.score(game, self), game.get_player_location(self)
 
         v = float("inf")
         move = (-1, -1)

@@ -74,6 +74,12 @@ def custom_score_2(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
     # Increase the effect of the difference in moves
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(game.get_opponent(player))
@@ -101,6 +107,12 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
 
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(game.get_opponent(player))

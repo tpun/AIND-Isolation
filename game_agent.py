@@ -38,27 +38,11 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-#                         *************************
-#                              Playing Matches
-#                         *************************
-#
-#  Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
-#                         Won | Lost   Won | Lost   Won | Lost   Won | Lost
-#     1       Random       9  |   1    10  |   0    10  |   0     9  |   1
-#     2       MM_Open      6  |   4     9  |   1     8  |   2     8  |   2
-#     3      MM_Center     9  |   1     9  |   1     9  |   1     9  |   1
-#     4     MM_Improved    5  |   5     7  |   3     7  |   3     7  |   3
-#     5       AB_Open      8  |   2     7  |   3     5  |   5     5  |   5
-#     6      AB_Center     5  |   5     6  |   4     5  |   5     5  |   5
-#     7     AB_Improved    4  |   6     5  |   5     4  |   6     4  |   6
-# --------------------------------------------------------------------------
-#            Win Rate:      65.7%        75.7%        68.6%        67.1%
-#
-# There were 16.0 timeouts during the tournament -- make sure your agent handles search timeout correctly, and consider increasing the timeout margin for your agent.
-#
-#
-# Your ID search forfeited 77.0 games while there were still legal moves available to play.
+    if game.is_loser(player):
+        return float("-inf")
 
+    if game.is_winner(player):
+        return float("inf")
 
     # Prefer moves that result in overlapping moves because it gives us higher
     # chance of blocking their next move.
@@ -336,11 +320,13 @@ class AlphaBetaPlayer(IsolationPlayer):
         v = float("-inf")
         move = (-1, -1)
         for m in game.get_legal_moves():
-            temp_v, temp_move = self._min_value(game.forecast_move(m), depth-1, alpha, beta)
-            v, move = max((v, move), (temp_v, m), key=lambda k: k[0])
+            forecast_game = game.forecast_move(m)
+            temp_v, temp_move = self._min_value(forecast_game, depth-1, alpha, beta)
+            v, move = max((temp_v, m), (v, move), key=lambda k: k[0])
             if v >= beta:
                 return v, move
             alpha = max(alpha, v)
+
         return v, move
 
     def _min_value(self, game, depth, alpha, beta):
@@ -353,11 +339,13 @@ class AlphaBetaPlayer(IsolationPlayer):
         v = float("inf")
         move = (-1, -1)
         for m in game.get_legal_moves():
-            temp_v, temp_move = self._max_value(game.forecast_move(m), depth-1, alpha, beta)
-            v, move = min((v, move), (temp_v, m), key=lambda k:k[0])
+            forecast_game = game.forecast_move(m)
+            temp_v, temp_move = self._max_value(forecast_game, depth-1, alpha, beta)
+            v, move = min((temp_v, m), (v, move), key=lambda k:k[0])
             if v <= alpha:
                 return v, move
             beta = min(beta, v)
+
         return v, move
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
@@ -409,10 +397,4 @@ class AlphaBetaPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         value, best_move = self._max_value(game, depth, alpha, beta)
-        # if best_move==(-1,-1) and game.get_legal_moves():
-        #     print(">>>>>>>>>>>>>>>>")
-        #     print("*** forfeited! ", game.get_player_location(self), value, best_move, depth, game.get_legal_moves())
-        #     print(game.to_string())
-        #     print("<<<<<<<<<<<<<<<<")
-
         return best_move

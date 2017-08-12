@@ -330,9 +330,6 @@ class AlphaBetaPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        if is_terminal(game):
-            return game.utility(self), (-1, -1)
-
         if depth==0 or not game.get_legal_moves():
             return self.score(game, self), game.get_player_location(self)
 
@@ -349,9 +346,6 @@ class AlphaBetaPlayer(IsolationPlayer):
     def _min_value(self, game, depth, alpha, beta):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-
-        if is_terminal(game):
-            return game.utility(self), (-1, -1)
 
         if depth==0 or not game.get_legal_moves():
             return self.score(game, self), game.get_player_location(self)
@@ -415,4 +409,10 @@ class AlphaBetaPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         value, best_move = self._max_value(game, depth, alpha, beta)
+        # if best_move==(-1,-1) and game.get_legal_moves():
+        #     print(">>>>>>>>>>>>>>>>")
+        #     print("*** forfeited! ", game.get_player_location(self), value, best_move, depth, game.get_legal_moves())
+        #     print(game.to_string())
+        #     print("<<<<<<<<<<<<<<<<")
+
         return best_move

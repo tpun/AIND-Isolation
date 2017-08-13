@@ -13,6 +13,22 @@ def is_terminal(game):
     active_player = game.active_player
     return game.is_winner(active_player) or game.is_loser(active_player)
 
+#                         *************************
+#                              Playing Matches
+#                         *************************
+#
+#  Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+#                         Won | Lost   Won | Lost   Won | Lost   Won | Lost
+#     1       Random      10  |   0     9  |   1     8  |   2     8  |   2
+#     2       MM_Open      5  |   5     5  |   5     6  |   4     7  |   3
+#     3      MM_Center     9  |   1    10  |   0     9  |   1     9  |   1
+#     4     MM_Improved    6  |   4     4  |   6     3  |   7     3  |   7
+#     5       AB_Open      5  |   5     5  |   5     4  |   6     5  |   5
+#     6      AB_Center     6  |   4     7  |   3     3  |   7     5  |   5
+#     7     AB_Improved    4  |   6     6  |   4     7  |   3     6  |   4
+# --------------------------------------------------------------------------
+#            Win Rate:      64.3%        65.7%        57.1%        61.4%
+
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.

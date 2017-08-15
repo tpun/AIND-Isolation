@@ -99,7 +99,7 @@ def custom_score_2(game, player):
     # Increase the effect of the difference in moves
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(game.get_opponent(player))
-    return len(own_moves)*len(own_moves) - len(opp_moves)*len(opp_moves)
+    return float(len(own_moves)*len(own_moves) - len(opp_moves)*len(opp_moves))
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -350,7 +350,7 @@ class AlphaBetaPlayer(IsolationPlayer):
         for m in game.get_legal_moves():
             forecast_game = game.forecast_move(m)
             temp_v, temp_move = self._min_value(forecast_game, depth-1, alpha, beta)
-            v, move = max((temp_v, m), (v, move), key=lambda k: k[0])
+            v, move = max((v, move), (temp_v, m), key=lambda k: k[0])
             if v >= beta:
                 return v, move
             alpha = max(alpha, v)
@@ -369,7 +369,7 @@ class AlphaBetaPlayer(IsolationPlayer):
         for m in game.get_legal_moves():
             forecast_game = game.forecast_move(m)
             temp_v, temp_move = self._max_value(forecast_game, depth-1, alpha, beta)
-            v, move = min((temp_v, m), (v, move), key=lambda k:k[0])
+            v, move = min((v, move), (temp_v, m), key=lambda k:k[0])
             if v <= alpha:
                 return v, move
             beta = min(beta, v)
